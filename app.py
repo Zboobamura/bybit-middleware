@@ -31,3 +31,17 @@ def get_open_interest():
     try:
         r = requests.get(url)
         content = r.content.decode('utf-8')
+        try:
+            d = r.json()
+            return jsonify({
+                'open_interest': float(d['result']['open_interest']),
+                'timestamp': d['time_now'],
+                'raw_response': content
+            })
+        except Exception as e:
+            return jsonify({'error': f'JSON decode error: {str(e)}', 'raw_response': content})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
